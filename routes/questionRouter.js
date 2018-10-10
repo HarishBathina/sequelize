@@ -8,37 +8,33 @@ console.log('in router');
 module.exports=router;
 var second={};
 
+
+//post the questions to the questions table and after completion post tags to tags table
 router.post('/',function(req,res,next){
 
-    //console.log(req.body.tags.length);
+    
     const length=req.body.tags.length;
     var tags= req.body.tags.slice();
-    //console.log(tags);
     delete req.body.tags;
     Question.create(req.body)
      .then(function(question){
-        for(i=0;i<length;i++)
-        {
+        for(i=0;i<length;i++){
          second.tag=tags[i];
          second.question_id=question.id
-         //console.log(req.body.tag);
+         
         Tag.create(second)
-        .then(function(tag){
-          // res.send(tag);
-        })
-        
-    
-        }
-        
-     }).then(
+        .then(function(tag){})
+    }}).then(
          res.send("success")
-     )
-    
+        )
 })
 
+
+//get all the questions in the questions table
 router.get('/',function(req,res,next){
     Question.findAll({include:[{all:true}]})
       .then(res.send.bind(res))
+})
 //     Question.findOne({
 //         where:{
 //             id:1
@@ -51,8 +47,9 @@ router.get('/',function(req,res,next){
 //         res.send(user);
 //     });
 // })
-})
 
+
+//get the details of question and user associated with question_id
 router.get('/:id',function(req,res,next){
     Question.findOne({
         where:{
@@ -65,8 +62,10 @@ router.get('/:id',function(req,res,next){
         if (!question) res.send('not found')
         else res.send(question)
     })
-    // Question.findById(req.params.id)
-    //   .then(function(question){
-    //       res.send(question)
-    //   })
+    
 })
+
+// Question.findById(req.params.id)
+//   .then(function(question){
+//       res.send(question)
+//   })

@@ -5,6 +5,7 @@ var Op = Sequelize.Op;
 
 var Question=require('../models/Question');
 
+//Manual posting of tags in tag table
 router.post("/",function(req,res,next){
 
     const length=req.body.tag.length;
@@ -22,6 +23,7 @@ router.post("/",function(req,res,next){
     
 })
 
+//get all the tags along with their question and user information
 router.get("/:id",function(req,res,next){
     Tag.findOne({
         where:{

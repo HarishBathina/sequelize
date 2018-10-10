@@ -9,6 +9,7 @@ const crypto = require ('crypto');
 
 const verifyToken=require('../verifyToken');
 
+//check if the user already exists and store the credentrials of previously non-existent users...
 router.post("/signup", function(req, res, next) {
 
     // const password = crypto
@@ -24,10 +25,8 @@ router.post("/signup", function(req, res, next) {
 
 })
 
-// router.post('/',function(req,res,next){
-//     User.create(req.body).then(res.send(req.body));
-// })
 
+//Get the information of user asssociated with the given userId
 router.get("/home/:userId",verifyToken,  (req, res, next) => {
     jwt.verify(req.token, 'secretKey', (err, authData) => {
       if (err) {
@@ -42,6 +41,7 @@ router.get("/home/:userId",verifyToken,  (req, res, next) => {
     })
 })
 
+//Authenticating the user
 router.post("/login",function(req,res,next){
     User.findOne({
         where:{
@@ -67,22 +67,23 @@ router.post("/login",function(req,res,next){
 })
 
 
-router.get('/:id',function(req,res,next){
-    Question.findOne({
-        where:{
-            posed_by:req.params.id,
-        },
-        include:[{
-            all:true,
-        }]
-      }).then(function(question){
-          Tag.findAll({
-            where:{
-                question_id:question.id
-            }
-          })
-      })
+//
+// router.get('/:id',function(req,res,next){
+//     Question.findOne({
+//         where:{
+//             userId:req.params.id,
+//         },
+//         include:[{
+//             all:true,
+//         }]
+//       }).then(function(question){
+//           Tag.findAll({
+//             where:{
+//                 question_id:question.id
+//             }
+//           })
+//       })
 
-})
+// })
 
 module.exports=router;
