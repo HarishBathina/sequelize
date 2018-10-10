@@ -1,0 +1,764 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Mock StackOverflow",
+      "description": "A sample server for mock StackOverflow. logIn, SignUp, search definitons and user definition and security"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "tags": [
+      {
+        "name": "question",
+        "description": "API's regarding questions"
+      },
+      {
+        "name": "search",
+        "description": "API to search for questions"
+      },
+      {
+        "name": "user"
+      }
+    ],
+    "schemes": ["http"],
+    "paths": {
+      "/question": {
+        "post": {
+          "tags": ["question"],
+          "summary": "Ask a new question",
+          "description": "",
+          "operationId": "addQuestion",
+          "consumes": ["application/json", "application/xml"],
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Question object that needs to be added to the dataBase",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/question"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully added to DB",
+              "schema": {
+                "$ref": "#/definitions/question"
+              }
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      },
+      "/question/findByTags": {
+        "get": {
+          "tags": ["question"],
+          "summary": "Finds Questions by tags",
+          "description": "Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
+          "operationId": "findQuestionsByTags",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "query",
+              "name": "tags",
+              "description": "Tags to filter by",
+              "required": true,
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "collectionFormat": "multi"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/questionResult"
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid tag value"
+            }
+          },
+          "deprecated": true
+        }
+      },
+      "/question/{questionId}": {
+        "get": {
+          "tags": ["question"],
+          "summary": "Displays question and its details by ID",
+          "description": "Returns a single question with answers and comments",
+          "operationId": "getQuestionById",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "questionId",
+              "description": "QuestionId of question to be displayed",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "$ref": "#/definitions/questionAnsComm"
+              }
+            },
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Question not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["question"],
+          "summary": "Updates a question in the store with form data",
+          "description": "",
+          "operationId": "updateQuestionWithForm",
+          "consumes": ["application/x-www-form-urlencoded"],
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "questionId",
+              "description": "QuestionId that needs to be updated",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "formData",
+              "name": "Title",
+              "description": "Updated title of the question",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "in": "formData",
+              "name": "Body",
+              "description": "Updated body of the question",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully Updated",
+              "schema": {
+                "$ref": "#/definitions/questionResult"
+              }
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["question"],
+          "summary": "Deletes a question",
+          "description": "",
+          "operationId": "deleteQuestion",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "name": "questionId",
+              "in": "path",
+              "description": "QuestionId of the question to delete",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully Deleted",
+              "schema": {
+                "$ref": "#/definitions/questionResult"
+              }
+            },
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Question not found"
+            }
+          }
+        }
+      },
+      "/question/{questionId}/answer": {
+        "post": {
+          "tags": ["question"],
+          "summary": "Post an answer",
+          "description": "",
+          "operationId": "addAnswer",
+          "consumes": ["application/json", "application/xml"],
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "questionId",
+              "description": "QuestionId of the answer to post",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Answer that needs to be added",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/answer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully added to DB",
+              "schema": {
+                "$ref": "#/definitions/answer"
+              }
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      },
+      "/question/{questionId}/answer/{answerId}": {
+        "put": {
+          "tags": ["question"],
+          "summary": "Updates an answer in the store with form data",
+          "description": "",
+          "operationId": "updateAnswerWithForm",
+          "consumes": ["application/x-www-form-urlencoded"],
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "questionId",
+              "description": "QuestionId of the answer that needs to be updated",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "path",
+              "name": "answerId",
+              "description": "AnswerID of answer to be updated",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "formData",
+              "name": "Body",
+              "description": "Updated body of the answer",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully Updated",
+              "schema": {
+                "$ref": "#/definitions/answer"
+              }
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["question"],
+          "summary": "Deletes an Answer",
+          "description": "",
+          "operationId": "deleteAnswer",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "questionId",
+              "description": "QuestionId of the answer that neeeds to be deleted",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "name": "answerId",
+              "in": "path",
+              "description": "Answer Id of the answer to be deleted",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully Deleted",
+              "schema": {
+                "$ref": "#/definitions/answer"
+              }
+            },
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Question not found"
+            }
+          }
+        }
+      },
+      "/question/{questionId}/comment": {
+        "post": {
+          "tags": ["question"],
+          "summary": "Post a comment",
+          "description": "",
+          "operationId": "addComment",
+          "consumes": ["application/json", "application/xml"],
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "questionId",
+              "description": "QuestionId of the comment to post",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Comment that needs to be added",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/comment"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully added to DB",
+              "schema": {
+                "$ref": "#/definitions/comment"
+              }
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      },
+      "/question/{questionId}/comment/{commentId}": {
+        "put": {
+          "tags": ["question"],
+          "summary": "Updates a comment in the store with form data",
+          "description": "",
+          "operationId": "updateCommentWithForm",
+          "consumes": ["application/x-www-form-urlencoded"],
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "questionId",
+              "description": "QuestionId of the comment that needs to be updated",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "path",
+              "name": "commentId",
+              "description": "CommentId of the comment to be updated",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "name": "Body",
+              "in": "formData",
+              "description": "Updated body of the comment",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully Updated",
+              "schema": {
+                "$ref": "#/definitions/comment"
+              }
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["question"],
+          "summary": "Deletes a comment",
+          "description": "",
+          "operationId": "deleteComment",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "questionId",
+              "description": "QuestionId of the comment that needs to be deleted",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "path",
+              "name": "commentId",
+              "description": "CommentId of the comment to be deleted",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully Deleted",
+              "schema": {
+                "$ref": "#/definitions/comment"
+              }
+            },
+            "400": {
+              "description": "Invalid ID supplied"
+            },
+            "404": {
+              "description": "Not found"
+            }
+          }
+        }
+      },
+      "/user/login": {
+        "get": {
+          "tags": ["user"],
+          "summary": "Logs user into the system",
+          "description": "",
+          "operationId": "loginUser",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "name": "username",
+              "in": "query",
+              "description": "The user name for login",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "password",
+              "in": "query",
+              "description": "",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "type": "string"
+              },
+              "headers": {
+                "X-Rate-Limit": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "calls per hour allowed by the user"
+                },
+                "X-Expires-After": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "date in UTC when token expires"
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid username/password supplied"
+            }
+          }
+        }
+      },
+      "/user/logout": {
+        "get": {
+          "tags": ["user"],
+          "summary": "Logs out current logged in user session",
+          "description": "",
+          "operationId": "logoutUser",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [],
+          "responses": {
+            "default": {
+              "description": "successful operation"
+            }
+          }
+        }
+      },
+      "/user/signup": {
+        "post": {
+          "tags": ["user"],
+          "summary": "Create user",
+          "description": "",
+          "operationId": "createUser",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Created user object",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "default": {
+              "description": "successful operation"
+            }
+          }
+        }
+      },
+      "/user/userid": {
+        "get": {
+          "tags": ["user"],
+          "summary": "Finds Questions asked by logged-in user",
+          "description": "",
+          "operationId": "findQuestionsByUserId",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "userId",
+              "description": "UserId of the user logged-in",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/questionResult"
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid tag value"
+            }
+          }
+        }
+      },
+      "/search/{searchString}": {
+        "get": {
+          "tags": ["search"],
+          "summary": "Search",
+          "description": "",
+          "operationId": "search",
+          "produces": ["application/xml", "application/json"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "searchString",
+              "description": "Search string",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Succesfully retrieved the result",
+              "schema": {
+                "$ref": "#/definitions/questionAnsComm"
+              }
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "tag": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "type": "string"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "answer": {
+        "type": "object",
+        "required": ["Body"],
+        "properties": {
+          "answerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "answerBody": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "comment": {
+        "type": "object",
+        "required": ["Body"],
+        "properties": {
+          "commentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "commentBody": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "question": {
+        "type": "object",
+        "required": ["Title", "Body"],
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "questionTitle": {
+            "type": "string"
+          },
+          "questionBody": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/tag"
+            }
+          }
+        }
+      },
+      "questionAnsComm": {
+        "type": "object",
+        "required": ["Title", "Body"],
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "questionTitle": {
+            "type": "string"
+          },
+          "questionBody": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/tag"
+            }
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/answer"
+            }
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/comment"
+            }
+          }
+        }
+      },
+      "questionResult": {
+        "type": "object",
+        "required": ["Title"],
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "questionTitle": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "userStatus": {
+            "type": "integer",
+            "format": "int32",
+            "description": "User Status"
+          }
+        }
+      }
+    }
+  }
+  
