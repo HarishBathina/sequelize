@@ -8,21 +8,22 @@ var Answer = require('../models/Answer');
 
 module.exports=router;
 
-//post answer for a question
 router.post('/',function(req,res,next){
-    Answer.create(req.body)
-    .then(function(answer)
-    {
-        res.send(answer)
-    })
-})
+    Comment.create(req.body)
+    .then(res.send(req.body))
+});
 
-//get all the answers in the database along with their questionId's and userId's
 router.get('/',function(req,res,next){
-    Answer.findAll({
+    Comment.findAll({
         include:[{
             all:true,
-        }]
-    }).then(res.send.bind(res))
+        include:[{
+            all:true,
+            include:[{
+                all:true
+            }]
+        }],
+    }]
+    }).then(res.send.bind(res));
 })
 

@@ -6,6 +6,8 @@ var connection = require('./db');
 var questionRouter=require('./routes/questionRouter');
 var userRouter=require('./routes/userRouter');
 var tagRouter=require('./routes/tagRouter');
+var answerRouter=require('./routes/answerRouter');
+var commentRouter=require('./routes/commentRouter');
 
 app.use(function (req, res, next) {
     //Enabling CORS 
@@ -20,6 +22,8 @@ app.use(bodyParser.json());
 app.use('/question',questionRouter);
 app.use('/user',userRouter);
 app.use('/tag',tagRouter);
+app.use('/answer',answerRouter);
+app.use('/comment',commentRouter);
 
 // app.use(express.static('/'))
 

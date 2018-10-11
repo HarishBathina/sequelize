@@ -1,9 +1,11 @@
 var router =require('express').Router();
-console.log('in router');
-
+var User=require('../models/User');
 var Question = require('../models/Question');
-var Tag=require('../models/Tag');
-console.log('in router');
+var Sequelize =require('sequelize');
+var Tag = require('../models/Tag');
+var Op = Sequelize.Op;
+var Comment = require('../models/Comment');
+var Answer = require('../models/Answer');
 
 module.exports=router;
 var second={};
@@ -64,6 +66,36 @@ router.get('/:id',function(req,res,next){
     })
     
 })
+
+//get answers and comments associated with a question using questionId
+router.get('/info/:questionId',function(req,res,next){
+    var arr=[];
+    Answer.findAll({
+        where:{
+            questionId:req.params.questionId
+        },attributes:['id']
+    }).then(function(results){
+        results.map(result=>{
+            arr.push(result.dataValues.id)
+
+        })
+        console.log(arr);
+    }).then(function(){
+
+            console.log(arr);
+            Comment.findAll({
+                 where:{
+            answerId:{
+                [Op.in]:arr
+            }
+        },
+        include:[
+            {all:true,include:[{all:true}]}
+        ]      
+    }).then(res.send.bind(res))
+
+        })
+    })
 
 // Question.findById(req.params.id)
 //   .then(function(question){
