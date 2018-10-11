@@ -35,7 +35,7 @@ const swaggerDocument = require("./swagger/swagger.json");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
-var server =app.listen(3000,function(){
+var server =app.listen(5000,function(){
     console.log('listening on port',server.address().port)
     connection.sync({force:false}).then(function(){
           connection.sync().then(message=>{
