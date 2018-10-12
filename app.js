@@ -8,6 +8,7 @@ var userRouter=require('./routes/userRouter');
 var tagRouter=require('./routes/tagRouter');
 var answerRouter=require('./routes/answerRouter');
 var commentRouter=require('./routes/commentRouter');
+var searchRouter=require('./routes/searchRouter');
 
 app.use(function (req, res, next) {
     //Enabling CORS 
@@ -24,6 +25,7 @@ app.use('/user',userRouter);
 app.use('/tag',tagRouter);
 app.use('/answer',answerRouter);
 app.use('/comment',commentRouter);
+app.use('/search',searchRouter);
 
 // app.use(express.static('/'))
 
