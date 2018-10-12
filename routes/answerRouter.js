@@ -5,6 +5,7 @@ const verifyToken = require("../verifyToken");
 var Tag = require("../models/Tag");
 var Comment = require("../models/Comment");
 var Answer = require("../models/Answer");
+const jwt = require('jsonwebtoken');
 
 module.exports = router;
 

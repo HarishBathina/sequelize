@@ -4,6 +4,7 @@ var Tag = require("../models/Tag");
 var Op = Sequelize.Op;
 const verifyToken = require("../verifyToken");
 var Question = require("../models/Question");
+const jwt = require('jsonwebtoken');
 
 //Manual posting of tags in tag table
 router.post("/", verifyToken, function(req, res, next) {

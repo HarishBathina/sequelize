@@ -7,6 +7,7 @@ var Op = Sequelize.Op;
 var Comment = require("../models/Comment");
 var Answer = require("../models/Answer");
 const verifyToken = require("../verifyToken");
+const jwt = require('jsonwebtoken');
 
 module.exports = router;
 var second = {};
