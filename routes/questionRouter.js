@@ -7,7 +7,7 @@ var Op = Sequelize.Op;
 var Comment = require("../models/Comment");
 var Answer = require("../models/Answer");
 const verifyToken = require("../verifyToken");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 module.exports = router;
 var second = {};
@@ -36,14 +36,18 @@ router.post("/", verifyToken, function(req, res, next) {
 });
 
 //get all the questions in the questions table
-router.get("/", verifyToken, function(req, res, next) {
-  jwt.verify(req.token, "secretKey", (err, authData) => {
-    if (err) {
-      res.status(403).send("Invalid Token");
-    } else {
-      Question.findAll({ include: [{ all: true }] }).then(res.send.bind(res));
-    }
-  });
+router.get("/", function(req, res, next) {
+  // jwt.verify(req.token, "secretKey", (err, authData) => {
+  //   if (err) {
+  //     res.status(403).send("Invalid Token");
+  //   } else {
+  Question.findAll({
+    include: [{ all: true }],
+    limit: 2,
+    order: [["questionTitle", "DESC"]]
+  }).then(res.send.bind(res));
+  //   }
+  // });
 });
 //     Question.findOne({
 //         where:{
@@ -87,44 +91,44 @@ router.get("/info/:questionId", verifyToken, function(req, res, next) {
     if (err) {
       res.status(403).send("Invalid Token");
     } else {
-      var arr = [];
+      // var arr = [];
+      // Answer.findAll({
+      //   where: {
+      //     questionId: req.params.questionId
+      //   },
+      //   attributes: ["id"]
+      // })
+      //   .then(function(results) {
+      //     results.map(result => {
+      //       arr.push(result.dataValues.id);
+      //     });
+      //     console.log(arr);
+      //   })
+      //   .then(function() {
+      //     console.log(arr);
+      //     Comment.findAll({
+      //       where: {
+      //         answerId: {
+      //           [Op.in]: arr
+      //         }
+      //       },
+      //       include: [{ all: true, include: [{ all: true }] }]
+      //     }).then(function(info) {
       Answer.findAll({
         where: {
           questionId: req.params.questionId
         },
-        attributes: ["id"]
-      })
-        .then(function(results) {
-          results.map(result => {
-            arr.push(result.dataValues.id);
-          });
-          console.log(arr);
-        })
-        .then(function() {
-          console.log(arr);
-          Comment.findAll({
-            where: {
-              answerId: {
-                [Op.in]: arr
-              }
-            },
-            include: [{ all: true, include: [{ all: true }] }]
-          }).then(function(info) {
-            Answer.findAll({
-              where: {
-                questionId: req.params.questionId
-              },
-              include: [
-                {
-                  all: true
-                }
-              ]
-            }).then(function(info1) {
-              info.push(info1);
-              res.send(info);
-            });
-          });
-        });
+        include: [
+          {
+            all: true
+          }
+        ]
+      }).then(function(info1) {
+        info.push(info1);
+        res.send(info);
+      });
+      //       });
+      //     });
     }
   });
 });

@@ -36,8 +36,9 @@ Question.belongsTo(User,{foreignKey:'userId'});
 
 Answer.belongsTo(User,{foreignKey:'userId',as:'User',targetKey:'Userid'});
 Comment.belongsTo(User,{foreignKey:'userId',as:'User',targetKey:'Userid'});
-Comment.belongsTo(Answer,{foreignKey:'answerId',as:'Answer',targetKey:'id'});
-Tag.belongsTo(Question,{foreignKey:'question_id',as:'Question',targetKey:'id'});
+Comment.belongsTo(Question,{foreignKey:'questionId',as:'Question',targetKey:'id'});
+Tag.belongsTo(Question,{foreignKey:'questionId',as:'Question',targetKey:'id'});
 Answer.belongsTo(Question,{foreignKey:'questionId',as:'Question',})
   //var Question = require('./models/Question');
+
 

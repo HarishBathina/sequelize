@@ -44,3 +44,11 @@ router.get("/", verifyToken, function(req, res, next) {
     }
   });
 });
+
+router.get('/:questionId',function(req,res,next){
+    Comment.findAll({
+        where:{
+            questionId:req.params.questionId
+        }
+    }).then(res.send.bind(res));
+})
